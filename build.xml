@@ -1,0 +1,48 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="MyPircBot" default="jar">
+  <description>
+    Build reusable MyPircBot lib and MyPircBot client
+  </description>
+
+  <property name="src.dir" location="src"/>
+  <property name="src2.dir" location="MyPircBot_Client/src" />
+  <property name="build.dir" location="build"/>
+  <property name="classes.dir" location="${build.dir}/classes"/>
+  <property name="artifacts.dir" location="${build.dir}/artifacts"/>
+  <property name="reports.dir" location="${build.dir}/reports"/>
+  <property name="ivy.lib.dir" location="${build.dir}/lib"/>
+
+  <path id="lib.path">
+    <fileset dir="${ivy.lib.dir}"/>
+  </path>
+
+  <target name="resolve" description="--> retrieve dependencies with ivy">
+    <ivy:retrieve/>
+  </target>
+
+  <target name="report" depends="resolve" description="--> generate a report of dependencies">
+    <ivy:report todir="${reports.dir}"/>
+  </target>
+
+  <target name="build" depends="resolve" description="--> build MyPircBot lib">
+    <mkdir dir="${classes.dir}"/>
+    <javac fork="true" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="lib.path"> </javac>
+   <javac fork="true" srcdir="${src2.dir}" destdir="${classes.dir}" classpathref="lib.path"> </javac>
+      
+</target>
+
+   
+  <target name="jar" depends="build" description="--> create MyPircBot.jar">
+    <mkdir dir="${artifacts.dir}"/>
+    <jar jarfile="${artifacts.dir}/MyPircBot.jar" basedir="${classes.dir}"/>
+    <jar jarfile="${artifacts.dir}/MyBotClient.jar" basedir="${classes.dir}"/>  
+</target>
+
+   <target name="clean" description="--> delete the build directory">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="clean-cache" description="--> clean the ivy cache">
+    <ivy:cleancache/>
+  </target>
+
+</project>
